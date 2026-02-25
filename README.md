@@ -157,11 +157,8 @@ footer{
 <button id="classLinkBtn" onclick="openClassLink()">
 🔗 Open Class Link
 </button>
-</div>
-};
 
-// External class links
-const classLinks = {
+<select
  "Year 1 Onyx": "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0rYRtfsS0YSZnutOo0_TqW8oPJgK-F9g_qKDUeRw0uPHg7uYmdKwIzhwDfRXBmetIxoEUEVpKe",
  "Year 1 Amber": "https://calendar.app.google/JkBUKhqXFwFCFuLs7",
  "Year 2 Ruby": "https://meet.google.com/ruby",
@@ -173,7 +170,10 @@ const classLinks = {
  "Year 5 Diamond": "https://calendar.app.google/HRv1sGNca44dymbN9",
  "Year 5 Opal": "https://calendar.app.google/9nMPUL3aaayTJPcG6",
  "Year 6 Pearl": "https://calendar.app.google/JkBUKhqXFwFCFuLs7"
-};
+</select>
+
+</div>
+
 <footer>
 Soaring High 🚀 | We are the heartbeat of Fairview
 </footer>
