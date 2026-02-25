@@ -96,7 +96,7 @@ h2{
     <div class="box"><div class="number" id="seconds">0</div><div class="label">SECONDS</div></div>
 </div>
 
-<div class="footer">Soaring High 🚀 | We are the heartbeat of Fairview</div>
+<div class="footer">Soaring to greater heights 🚀 | Primary department</div>
 
 <audio id="alertSound">
 <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg">
