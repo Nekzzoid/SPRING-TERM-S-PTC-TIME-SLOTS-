@@ -160,9 +160,10 @@ footer{
 
 <footer>
 Soaring High 🚀 | We are the heartbeat of Fairview - Primary department
- Mr. E
 </footer>
-
+<footer>
+ Emmanuel Anigbogu (Mr. E.)
+</footer>
 <script>
 // Countdown
 const eventDate = new Date("2026-02-28T09:00:00+01:00").getTime();
@@ -206,7 +207,7 @@ const classLinks = {
  "Year 2 Beryl": "https://calendar.app.google/dgdvBJFCeTH6AchZ8",
  "Year 3 Crystal": "https://calendar.app.google/Y83p4YJ5PEdu6p8g9",
  "Year 3 Silver": "https://calendar.app.google/6MLhowC1ff6dKVDk6",
- "Year 4 Gold": "https://fairview.edu/gold",
+ "Year 4 Gold": "https://calendar.app.google/c5LYHPf5XYjSF2bN8",
  "Year 4 Topaz": "https://calendar.app.google/uMppKwDXSQtbu8CQ8",
  "Year 5 Diamond": "https://calendar.app.google/HRv1sGNca44dymbN9",
  "Year 5 Opal": "https://calendar.app.google/9nMPUL3aaayTJPcG6",
