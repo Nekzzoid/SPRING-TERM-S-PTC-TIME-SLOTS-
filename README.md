@@ -150,8 +150,6 @@ footer{
 <option value="">Select Teacher</option>
 </select>
 
-<input type="datetime-local" id="appointmentDate" required>
-
 <button onclick="submitBooking()">Confirm Booking</button>
 
 <button id="classLinkBtn" onclick="openClassLink()">
