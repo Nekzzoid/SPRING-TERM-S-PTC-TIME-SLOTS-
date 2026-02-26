@@ -55,6 +55,11 @@ button:hover{
     cursor:pointer;
     font-size:12px;
     min-width:80px;
+    transition:0.2s;
+}
+
+.slot:active{
+    transform:scale(0.97);
 }
 
 .available{
@@ -99,7 +104,7 @@ th,td{
 <h3>PTC Booking System</h3>
 </header>
 
-<!-- LOGIN WITH TEACHER ID -->
+<!-- LOGIN (ROLE + PASSWORD ONLY) -->
 <div class="container" id="loginSection">
 <h3>Login</h3>
 
@@ -109,7 +114,6 @@ th,td{
 <option value="admin">Admin</option>
 </select>
 
-<input type="text" id="userId" placeholder="Teacher ID (if teacher)">
 <input type="password" id="password" placeholder="Password">
 
 <button onclick="login()">Login</button>
@@ -152,46 +156,30 @@ th,td{
 
 <script>
 
-// ===== DATABASE (TEACHER IDS) =====
-const users = {
- teachers: {
-  "MsVictoria":"pass123",
-  "MsRita":"pass123",
-  "MsJudith":"pass123",
-  "MsIfeoluwa":"pass123",
-  "MsZainab":"pass123",
-  "MsMary":"pass123",
-  "MsMaryjane":"pass123",
-  "MrJacob":"pass123",
-  "MsAyoola":"pass123",
-  "MsImaobong":"pass123"
- },
- admin: {
-  "admin":"admin123"
- }
-};
+// ===== DATABASE (TEACHER PASSWORD) =====
+const teacherPassword = "pass123";
+const adminPassword = "admin123";
 
 let userRole = "public";
 let teacherId = "";
 let bookings = JSON.parse(localStorage.getItem("fairviewBookings")) || [];
 
-// ===== LOGIN WITH TEACHER ID =====
+// ===== LOGIN (ROLE + PASSWORD ONLY) =====
 function login(){
  const role = document.getElementById("role").value;
- const id = document.getElementById("userId").value;
  const pass = document.getElementById("password").value;
 
  if(role === "teacher"){
-   if(!id || users.teachers[id] !== pass){
-     alert("Invalid teacher ID or password");
+   if(pass !== teacherPassword){
+     alert("Invalid teacher password");
      return;
    }
-   teacherId = id;
+   teacherId = "Teacher";
    userRole = "teacher";
  }
 
  if(role === "admin"){
-   if(pass !== "admin123"){
+   if(pass !== adminPassword){
      alert("Invalid admin password");
      return;
    }
@@ -232,7 +220,7 @@ function loadClasses(){
  generateSlots();
 }
 
-// ===== SLOT GENERATION (9–3, 15 MIN, BREAK 12:30–1) =====
+// ===== SLOT GENERATION (SINGLE CLICK, NO DOUBLE CLICK) =====
 let selectedTime = "";
 
 function generateSlots(){
@@ -255,7 +243,7 @@ function generateSlots(){
     let div=document.createElement("div");
     div.className="slot available";
     div.innerHTML=time;
-    div.onclick=()=>selectSlot(time);
+    div.onclick=()=>selectSlot(time); // single click only
     container.appendChild(div);
   }
  }
@@ -267,7 +255,7 @@ function selectSlot(time){
  alert("Selected: "+time);
 }
 
-// ===== BOOK SLOT (PARENT CAN SEE ALL BOOKINGS) =====
+// ===== BOOK SLOT (NO DOUBLE SELECTION) =====
 function submitBooking(){
  let parent=document.getElementById("parentName").value;
  let phone=document.getElementById("phone").value;
@@ -299,7 +287,7 @@ function submitBooking(){
  loadDashboard();
 }
 
-// ===== REFRESH SLOT STATUS (VISIBLE TO ALL) =====
+// ===== REFRESH SLOT STATUS =====
 function refreshSlots(){
  let className=document.getElementById("classSelect").value;
 
@@ -314,13 +302,13 @@ function refreshSlots(){
  });
 }
 
-// ===== DASHBOARD (SHOW ALL BOOKINGS) =====
+// ===== DASHBOARD (VISIBLE DATA) =====
 function loadDashboard(){
  let table=document.getElementById("bookingTable");
  table.innerHTML="<tr><th>Class</th><th>Time</th><th>Parent</th><th>Phone</th><th>Teacher</th></tr>";
 
  document.getElementById("dashboardTitle").innerText =
-   (userRole==="admin") ? "Admin Dashboard" : "Teacher Dashboard ("+teacherId+")";
+   (userRole==="admin") ? "Admin Dashboard" : "Teacher Dashboard";
 
  bookings.forEach(b=>{
   table.innerHTML+=`
