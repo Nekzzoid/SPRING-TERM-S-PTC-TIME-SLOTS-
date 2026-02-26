@@ -1,3 +1,4 @@
+/script>
 <script>
 
 // ================= PASSWORD DATABASE =================
@@ -29,7 +30,7 @@ function login(){
 
  if(role === "teacher"){
    const teacher = prompt("Enter Teacher Name exactly (e.g MsVictoria)");
-   if(teacherPasswords[teacher] !== pass){
+   if(!teacher || teacherPasswords[teacher] !== pass){
       alert("Invalid Teacher Details");
       return;
    }
@@ -73,7 +74,7 @@ const classes = [
 
 function loadClasses(){
  let select = document.getElementById("classSelect");
- select.innerHTML="";
+ select.innerHTML = "";
  classes.forEach(c=>{
    let opt=document.createElement("option");
    opt.text=c;
@@ -110,7 +111,7 @@ function generateSlots(){
  refreshSlots();
 }
 
-// ================= SELECT SLOT =================
+// ================= SELECT SLOT (SINGLE CLICK) =================
 function selectSlot(time, element){
  selectedTime = time;
 
@@ -121,7 +122,7 @@ function selectSlot(time, element){
  element.style.border="3px solid gold";
 }
 
-// ================= BOOK SLOT =================
+// ================= BOOK SLOT (NO DOUBLE BOOKING) =================
 function submitBooking(){
  let parent=document.getElementById("parentName").value;
  let phone=document.getElementById("phone").value;
@@ -138,17 +139,24 @@ function submitBooking(){
   return;
  }
 
- bookings.push({className,time:selectedTime,parent,phone,teacher});
- localStorage.setItem("fairviewBookings",JSON.stringify(bookings));
+ bookings.push({
+   className,
+   time:selectedTime,
+   parent,
+   phone,
+   teacher
+ });
 
- selectedTime="";
+ localStorage.setItem("fairviewBookings", JSON.stringify(bookings));
+
+ selectedTime = "";
  alert("Booking Confirmed");
 
  generateSlots();
  loadDashboard();
 }
 
-// ================= REFRESH SLOT =================
+// ================= REFRESH SLOT STATUS =================
 function refreshSlots(){
  let className=document.getElementById("classSelect").value;
 
