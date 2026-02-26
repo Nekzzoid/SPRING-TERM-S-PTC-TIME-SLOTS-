@@ -1,187 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Fairview PTC System</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body{
-    font-family: Arial, sans-serif;
-    margin:0;
-    background: linear-gradient(135deg,#002147,#004aad);
-    color:white;
-    text-align:center;
-}
-
-header{ padding:20px; }
-
-.logo{
-    width:120px;
-}
-
-.container{
-    background:white;
-    color:black;
-    margin:20px auto;
-    padding:20px;
-    border-radius:15px;
-    width:95%;
-    max-width:1200px;
-}
-
-select,input,button{
-    padding:8px;
-    margin:5px;
-    border-radius:6px;
-    border:1px solid #ccc;
-}
-
-button{
-    background:#004aad;
-    color:white;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#002147;
-}
-
-.slot{
-    display:inline-block;
-    margin:5px;
-    padding:8px;
-    border-radius:6px;
-    cursor:pointer;
-    font-size:12px;
-    min-width:80px;
-    transition:0.2s;
-}
-
-.slot:active{
-    transform:scale(0.97);
-}
-
-.available{
-    background:#28a745;
-    animation:pulse 2s infinite;
-}
-
-.booked{
-    background:#dc3545;
-    color:white;
-}
-
-.disabled{
-    background:gray;
-    cursor:not-allowed;
-}
-
-@keyframes pulse{
-    0%{opacity:1;}
-    50%{opacity:0.6;}
-    100%{opacity:1;}
-}
-
-.hidden{display:none;}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-th,td{
-    border:1px solid #ccc;
-    padding:6px;
-}
-</style>
-</head>
-<body>
-
-<header>
-<img src="https://cdn.phototourl.com/uploads/2026-02-26-8f429b47-8d09-4435-8a91-9306a9fcf9f2.png" class="logo">
-<h1>FAIRVIEW SCHOOL</h1>
-<h3>PTC Booking System</h3>
-</header>
-
-<!-- LOGIN (ROLE + PASSWORD ONLY) -->
-<div class="container" id="loginSection">
-<h3>Login</h3>
-
-<select id="role">
-<option value="parent">Parent</option>
-<option value="teacher">Teacher</option>
-<option value="admin">Admin</option>
-</select>
-
-<input type="password" id="password" placeholder="Password">
-
-<button onclick="login()">Login</button>
-</div>
-
-<!-- PARENT DASHBOARD (CAN SEE ALL BOOKINGS) -->
-<div class="container hidden" id="bookingSection">
-<h3>Parent Dashboard (View All Bookings)</h3>
-
-<input type="text" id="parentName" placeholder="Your Name">
-<input type="text" id="phone" placeholder="Phone Number">
-
-<select id="teacherSelect">
-<option value="">Select Class Teacher</option>
-<option value="MsVictoria">Ms Victoria</option>
-<option value="MsRita">Ms Rita</option>
-<option value="MsJudith">Ms Judith</option>
-<option value="MsIfeoluwa">Ms Ifeoluwa</option>
-<option value="MsZainab">Ms Zainab</option>
-<option value="MsMary">Ms Mary</option>
-<option value="MsMaryjane">Ms Maryjane</option>
-<option value="MrJacob">Mr Jacob</option>
-<option value="MsAyoola">Ms Ayoola</option>
-<option value="MsImaobong">Ms Imaobong</option>
-</select>
-
-<select id="classSelect" onchange="generateSlots()"></select>
-
-<div id="slots"></div>
-
-<button onclick="submitBooking()">Book Appointment</button>
-</div>
-
-<!-- DASHBOARD (TEACHER OR ADMIN OR PARENT VIEW) -->
-<div class="container hidden" id="adminSection">
-<h3 id="dashboardTitle"></h3>
-
-<table id="bookingTable"></table>
-</div>
-
 <script>
 
-// ===== DATABASE (TEACHER PASSWORD) =====
-const teacherPassword = "pass123";
+// ================= PASSWORD DATABASE =================
+const teacherPasswords = {
+ "MsVictoria":"vic123",
+ "MsRita":"rita123",
+ "MsJudith":"jud123",
+ "MsIfeoluwa":"ife123",
+ "MsZainab":"zai123",
+ "MsMary":"mary123",
+ "MsMaryjane":"mj123",
+ "MrJacob":"jac123",
+ "MsAyoola":"ayo123",
+ "MsImaobong":"ima123"
+};
+
 const adminPassword = "admin123";
 
-let userRole = "public";
+let userRole = "";
 let teacherId = "";
+let selectedTime = "";
+
 let bookings = JSON.parse(localStorage.getItem("fairviewBookings")) || [];
 
-// ===== LOGIN (ROLE + PASSWORD ONLY) =====
+// ================= LOGIN =================
 function login(){
  const role = document.getElementById("role").value;
  const pass = document.getElementById("password").value;
 
  if(role === "teacher"){
-   if(pass !== teacherPassword){
-     alert("Invalid teacher password");
-     return;
+   const teacher = prompt("Enter Teacher Name exactly (e.g MsVictoria)");
+   if(teacherPasswords[teacher] !== pass){
+      alert("Invalid Teacher Details");
+      return;
    }
-   teacherId = "Teacher";
+   teacherId = teacher;
    userRole = "teacher";
  }
 
  if(role === "admin"){
    if(pass !== adminPassword){
-     alert("Invalid admin password");
-     return;
+      alert("Invalid Admin Password");
+      return;
    }
    userRole = "admin";
  }
@@ -194,7 +53,9 @@ function login(){
 
  if(userRole === "parent"){
    document.getElementById("bookingSection").classList.remove("hidden");
+   document.getElementById("adminSection").classList.remove("hidden");
    loadClasses();
+   loadDashboard();
  }
 
  if(userRole === "teacher" || userRole === "admin"){
@@ -203,7 +64,7 @@ function login(){
  }
 }
 
-// ===== CLASSES =====
+// ================= CLASSES =================
 const classes = [
 "Year 1 Onyx","Year 1 Amber","Year 2 Ruby","Year 2 Beryl",
 "Year 3 Crystal","Year 3 Silver","Year 4 Gold","Year 4 Topaz",
@@ -212,6 +73,7 @@ const classes = [
 
 function loadClasses(){
  let select = document.getElementById("classSelect");
+ select.innerHTML="";
  classes.forEach(c=>{
    let opt=document.createElement("option");
    opt.text=c;
@@ -220,9 +82,7 @@ function loadClasses(){
  generateSlots();
 }
 
-// ===== SLOT GENERATION (SINGLE CLICK, NO DOUBLE CLICK) =====
-let selectedTime = "";
-
+// ================= SLOT GENERATION =================
 function generateSlots(){
  let container=document.getElementById("slots");
  container.innerHTML="";
@@ -243,19 +103,25 @@ function generateSlots(){
     let div=document.createElement("div");
     div.className="slot available";
     div.innerHTML=time;
-    div.onclick=()=>selectSlot(time); // single click only
+    div.onclick=()=>selectSlot(time, div);
     container.appendChild(div);
   }
  }
  refreshSlots();
 }
 
-function selectSlot(time){
+// ================= SELECT SLOT =================
+function selectSlot(time, element){
  selectedTime = time;
- alert("Selected: "+time);
+
+ document.querySelectorAll(".slot").forEach(s=>{
+   s.style.border="none";
+ });
+
+ element.style.border="3px solid gold";
 }
 
-// ===== BOOK SLOT (NO DOUBLE SELECTION) =====
+// ================= BOOK SLOT =================
 function submitBooking(){
  let parent=document.getElementById("parentName").value;
  let phone=document.getElementById("phone").value;
@@ -272,22 +138,17 @@ function submitBooking(){
   return;
  }
 
- bookings.push({
-  className,
-  time:selectedTime,
-  parent,
-  phone,
-  teacher
- });
-
+ bookings.push({className,time:selectedTime,parent,phone,teacher});
  localStorage.setItem("fairviewBookings",JSON.stringify(bookings));
- alert("Booking confirmed");
 
- refreshSlots();
+ selectedTime="";
+ alert("Booking Confirmed");
+
+ generateSlots();
  loadDashboard();
 }
 
-// ===== REFRESH SLOT STATUS =====
+// ================= REFRESH SLOT =================
 function refreshSlots(){
  let className=document.getElementById("classSelect").value;
 
@@ -302,26 +163,73 @@ function refreshSlots(){
  });
 }
 
-// ===== DASHBOARD (VISIBLE DATA) =====
+// ================= DASHBOARD =================
 function loadDashboard(){
  let table=document.getElementById("bookingTable");
  table.innerHTML="<tr><th>Class</th><th>Time</th><th>Parent</th><th>Phone</th><th>Teacher</th></tr>";
 
  document.getElementById("dashboardTitle").innerText =
-   (userRole==="admin") ? "Admin Dashboard" : "Teacher Dashboard";
+   (userRole==="admin") ? "Admin Dashboard" :
+   (userRole==="teacher") ? "Teacher Dashboard" :
+   "All Bookings";
 
+ bookings
+  .filter(b => userRole==="admin" || userRole==="parent" || b.teacher===teacherId)
+  .forEach(b=>{
+    table.innerHTML+=`
+    <tr>
+      <td>${b.className}</td>
+      <td>${b.time}</td>
+      <td>${b.parent}</td>
+      <td>${b.phone}</td>
+      <td>${b.teacher}</td>
+    </tr>`;
+  });
+
+ if(userRole==="admin"){
+   table.innerHTML += `
+   <tr>
+     <td colspan="5">
+       <button onclick="exportCSV()">Export to Excel</button>
+       <button onclick="clearAll()">Clear All Bookings</button>
+       <button onclick="location.reload()">Logout</button>
+     </td>
+   </tr>`;
+ }
+
+ if(userRole==="teacher" || userRole==="parent"){
+   table.innerHTML += `
+   <tr>
+     <td colspan="5">
+       <button onclick="location.reload()">Logout</button>
+     </td>
+   </tr>`;
+ }
+}
+
+// ================= EXPORT =================
+function exportCSV(){
+ let csv = "Class,Time,Parent,Phone,Teacher\n";
  bookings.forEach(b=>{
-  table.innerHTML+=`
-  <tr>
-    <td>${b.className}</td>
-    <td>${b.time}</td>
-    <td>${b.parent}</td>
-    <td>${b.phone}</td>
-    <td>${b.teacher}</td>
-  </tr>`;
+   csv+=`${b.className},${b.time},${b.parent},${b.phone},${b.teacher}\n`;
  });
+
+ let blob = new Blob([csv],{type:"text/csv"});
+ let url = URL.createObjectURL(blob);
+ let a=document.createElement("a");
+ a.href=url;
+ a.download="Fairview_PTC_Bookings.csv";
+ a.click();
+}
+
+// ================= CLEAR =================
+function clearAll(){
+ if(confirm("Are you sure?")){
+   bookings=[];
+   localStorage.removeItem("fairviewBookings");
+   loadDashboard();
+   generateSlots();
+ }
 }
 
 </script>
-</body>
-</html>
