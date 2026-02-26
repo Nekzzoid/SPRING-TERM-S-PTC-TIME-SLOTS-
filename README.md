@@ -209,7 +209,7 @@ opacity:0.4;
 <div class="sun-glow"></div>
 <div>
 Designed by 
-<a href="https://your-link-here.com" target="_blank">
+<a href="https://www.linkedin.com/in/emmanuel-nekzzoid-290760221" target="_blank">
 E. Nekzzoid (Mr. E)
 </a>
 </div>
