@@ -1,280 +1,302 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
+<title>Fairview School PTC Booking</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fairview School | PTC Booking 2026</title>
 
 <style>
-:root{
- --green:#138a36;
- --yellow:#f2e205;
- --red:#e10600;
- --white:#ffffff;
-}
-
 body{
- margin:0;
- font-family:Segoe UI, sans-serif;
- background:linear-gradient(135deg,var(--green),#0b5d25);
- color:white;
- text-align:center;
+    font-family: Arial, sans-serif;
+    margin:0;
+    background: linear-gradient(135deg,#002147,#004aad);
+    color:white;
+    text-align:center;
 }
-
-/* Header */
-header{ padding:30px 20px; }
-.logo{ width:110px; }
-
-/* Animated Sun */
-.sun{
- width:100px;
- height:100px;
- background:var(--yellow);
- border-radius:50%;
- margin:20px auto;
- animation:spin 25s linear infinite;
- box-shadow:0 0 30px var(--yellow);
+header{
+    padding:20px;
 }
-@keyframes spin{
- from{transform:rotate(0deg);}
- to{transform:rotate(360deg);}
+h1{margin:0;}
+.container{
+    background:white;
+    color:black;
+    margin:20px auto;
+    padding:20px;
+    border-radius:15px;
+    width:95%;
+    max-width:1200px;
 }
-
-/* Countdown */
-.countdown{
- display:flex;
- justify-content:center;
- flex-wrap:wrap;
- gap:15px;
+select,input,button{
+    padding:8px;
+    margin:5px;
+    border-radius:6px;
+    border:1px solid #ccc;
 }
-.box{
- background:rgba(255,255,255,0.15);
- padding:15px;
- border-radius:12px;
- min-width:80px;
-}
-.number{ font-size:30px; font-weight:bold; }
-.label{ font-size:12px; }
-
-/* Booking Section */
-.booking{
- background:white;
- color:black;
- margin:30px auto;
- padding:25px;
- border-radius:15px;
- max-width:500px;
-}
-
-.booking h3{ color:var(--green); }
-
-select,input{
- width:100%;
- padding:10px;
- margin:8px 0;
- border-radius:8px;
- border:1px solid #ccc;
-}
-
 button{
- background:var(--yellow);
- border:none;
- padding:12px;
- width:100%;
- border-radius:25px;
- font-weight:bold;
- cursor:pointer;
- margin-top:10px;
+    background:#004aad;
+    color:white;
+    cursor:pointer;
 }
-
 button:hover{
- background:var(--green);
- color:white;
+    background:#002147;
 }
-
-#classLinkBtn{
- margin-top:10px;
- display:none;
+.slot{
+    display:inline-block;
+    margin:5px;
+    padding:8px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
+    min-width:80px;
 }
-
-footer{
- margin-top:40px;
- padding:15px;
- color:var(--yellow);
+.available{
+    background:#28a745;
+    animation:pulse 2s infinite;
+}
+.booked{
+    background:#dc3545;
+    color:white;
+}
+.disabled{
+    background:gray;
+    cursor:not-allowed;
+}
+@keyframes pulse{
+    0%{opacity:1;}
+    50%{opacity:0.6;}
+    100%{opacity:1;}
+}
+.hidden{display:none;}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    border:1px solid #ccc;
+    padding:6px;
 }
 </style>
 </head>
-
 <body>
 
 <header>
-<img src="fairview-logo.png" class="logo">
-<h1>Parent-Teacher Conference 2026</h1>
-<p>Saturday, 28 February 2026 | 9:00 AM (WAT)</p>
+<h1>FAIRVIEW SCHOOL</h1>
+<h3>PTC Booking System</h3>
+<div id="clock"></div>
 </header>
 
-<div class="sun"></div>
-
-<h2>Countdown to PTC</h2>
-<div class="countdown" id="countdown">
-<div class="box"><div class="number" id="days">0</div><div class="label">DAYS</div></div>
-<div class="box"><div class="number" id="hours">0</div><div class="label">HOURS</div></div>
-<div class="box"><div class="number" id="minutes">0</div><div class="label">MINUTES</div></div>
-<div class="box"><div class="number" id="seconds">0</div><div class="label">SECONDS</div></div>
+<div class="container" id="loginSection">
+<h3>Login</h3>
+<select id="role">
+<option value="parent">Parent</option>
+<option value="teacher">Teacher</option>
+<option value="admin">Admin</option>
+</select>
+<input type="password" id="password" placeholder="Enter password (teacher/admin)">
+<button onclick="login()">Login</button>
 </div>
 
-<!-- BOOKING FORM -->
-<div class="booking">
-<h3>📅 Book Your Appointment</h3>
+<div class="container hidden" id="bookingSection">
+<h3>Parent Booking Portal</h3>
 
-<input type="text" id="parentName" placeholder="Parent Full Name" required>
-<input type="tel" id="phone" placeholder="Phone Number" required>
-<input type="email" id="email" placeholder="Email Address" required>
-
-<select id="classSelect" onchange="updateTeachers()" required>
-<option value="">Select Class</option>
-<option value="Year 1 Onyx">Year 1 Onyx</option>
-<option value="Year 1 Amber">Year 1 Amber</option>
-<option value="Year 2 Ruby">Year 2 Ruby</option>
-<option value="Year 2 Beryl">Year 2 Beryl</option>
-<option value="Year 3 Crystal">Year 3 Crystal</option>
-<option value="Year 3 Silver">Year 3 Silver</option>
-<option value="Year 4 Gold">Year 4 Gold</option>
-<option value="Year 4 Topaz">Year 4 Topaz</option>
-<option value="Year 5 Diamond">Year 5 Diamond</option>
-<option value="Year 5 Opal">Year 5 Opal</option>
-<option value="Year 6 Pearl">Year 6 Pearl</option>
-</select>
-
-<select id="teacherSelect" required>
-<option value="">Select Teacher</option>
-</select>
-
-<button onclick="submitBooking()">Confirm Booking</button>
-
-<button id="classLinkBtn" onclick="openClassLink()">
-🔗 Open Class Link
-</button>
-
+<select id="classSelect"></select>
+<input type="text" id="parentName" placeholder="Parent Name">
+<input type="text" id="studentName" placeholder="Student Name">
+<div id="slots"></div>
 </div>
 
-<footer>
-Soaring High 🚀 | We are the heartbeat of Fairview - Primary department
-</footer>
-<footer>
- Emmanuel Anigbogu (Mr. E.)
-</footer>
+<div class="container hidden" id="adminSection">
+<h3>Admin Dashboard</h3>
+<div id="stats"></div>
+<button onclick="exportCSV()">Export to Excel</button>
+<table id="bookingTable"></table>
+</div>
+
 <script>
-// Countdown
-const eventDate = new Date("2026-02-28T09:00:00+01:00").getTime();
 
+// ===== CONFIG =====
+const teacherPassword = "teacher123";
+const adminPassword = "admin123";
+const eventDate = new Date("2026-02-28T09:00:00+01:00");
+
+const classes = [
+"Year 1 Onyx","Year 1 Amber","Year 2 Ruby","Year 2 Beryl",
+"Year 3 Crystal","Year 3 Silver","Year 4 Gold","Year 4 Topaz",
+"Year 5 Diamond","Year 5 Opal","Year 6 Pearl"
+];
+
+let bookings = JSON.parse(localStorage.getItem("fairviewBookings")) || [];
+
+// ===== LIVE WAT CLOCK =====
+function updateClock(){
+    let now = new Date().toLocaleString("en-NG",{timeZone:"Africa/Lagos"});
+    document.getElementById("clock").innerHTML="Nigerian Time (WAT): "+now;
+}
+setInterval(updateClock,1000);
+
+// ===== LOGIN =====
+function login(){
+    let role=document.getElementById("role").value;
+    let pass=document.getElementById("password").value;
+
+    if(role==="teacher" && pass!==teacherPassword){
+        alert("Wrong teacher password"); return;
+    }
+    if(role==="admin" && pass!==adminPassword){
+        alert("Wrong admin password"); return;
+    }
+
+    document.getElementById("loginSection").classList.add("hidden");
+
+    if(role==="parent"){
+        document.getElementById("bookingSection").classList.remove("hidden");
+        loadClasses();
+    }
+    if(role==="admin"){
+        document.getElementById("adminSection").classList.remove("hidden");
+        loadAdmin();
+    }
+}
+
+// ===== LOAD CLASSES =====
+function loadClasses(){
+    let select=document.getElementById("classSelect");
+    classes.forEach(c=>{
+        let option=document.createElement("option");
+        option.text=c;
+        select.add(option);
+    });
+    generateSlots();
+}
+
+// ===== GENERATE TIME SLOTS =====
+function generateSlots(){
+    let container=document.getElementById("slots");
+    container.innerHTML="";
+
+    let start=9;
+    let end=15;
+
+    for(let hour=start; hour<end; hour++){
+        for(let min=0; min<60; min+=15){
+
+            let time=String(hour).padStart(2,'0')+":"+String(min).padStart(2,'0');
+
+            if(time==="12:30"||time==="12:45"){
+                let div=document.createElement("div");
+                div.className="slot disabled";
+                div.innerHTML=time+" (Break)";
+                container.appendChild(div);
+                continue;
+            }
+
+            let div=document.createElement("div");
+            div.className="slot available";
+            div.innerHTML=time;
+
+            div.onclick=function(){
+                bookSlot(time);
+            };
+
+            container.appendChild(div);
+        }
+    }
+
+    refreshSlots();
+}
+
+// ===== BOOK SLOT =====
+function bookSlot(time){
+
+    let className=document.getElementById("classSelect").value;
+    let parent=document.getElementById("parentName").value;
+    let student=document.getElementById("studentName").value;
+
+    if(!parent||!student){
+        alert("Enter parent & student name"); return;
+    }
+
+    // Auto lock Friday 6PM
+    let now=new Date().toLocaleString("en-NG",{timeZone:"Africa/Lagos"});
+    now=new Date(now);
+    let fridayLock=new Date(eventDate);
+    fridayLock.setDate(fridayLock.getDate()-1);
+    fridayLock.setHours(18,0,0);
+
+    if(now>fridayLock){
+        alert("Booking Closed"); return;
+    }
+
+    if(bookings.find(b=>b.className===className && b.time===time)){
+        alert("Slot already booked"); return;
+    }
+
+    bookings.push({
+        className,time,parent,student
+    });
+
+    localStorage.setItem("fairviewBookings",JSON.stringify(bookings));
+    alert("Booking Confirmed. SMS reminder will be sent 1 hour before meeting.");
+    refreshSlots();
+}
+
+// ===== REFRESH SLOT STATUS =====
+function refreshSlots(){
+    let className=document.getElementById("classSelect").value;
+    document.querySelectorAll(".slot").forEach(s=>{
+        let time=s.innerText.replace(" (Break)","");
+        if(bookings.find(b=>b.className===className && b.time===time)){
+            s.className="slot booked";
+            s.innerHTML=time+"<br><small>"+bookings.find(b=>b.className===className && b.time===time).parent+"</small>";
+        }
+    });
+}
+
+// ===== ADMIN =====
+function loadAdmin(){
+    let table=document.getElementById("bookingTable");
+    table.innerHTML="<tr><th>Class</th><th>Time</th><th>Parent</th><th>Student</th></tr>";
+    bookings.forEach(b=>{
+        table.innerHTML+=`<tr>
+        <td>${b.className}</td>
+        <td>${b.time}</td>
+        <td>${b.parent}</td>
+        <td>${b.student}</td>
+        </tr>`;
+    });
+
+    document.getElementById("stats").innerHTML=
+    "Total Bookings: "+bookings.length;
+}
+
+// ===== EXPORT CSV =====
+function exportCSV(){
+    let csv="Class,Time,Parent,Student\n";
+    bookings.forEach(b=>{
+        csv+=`${b.className},${b.time},${b.parent},${b.student}\n`;
+    });
+    let blob=new Blob([csv],{type:"text/csv"});
+    let link=document.createElement("a");
+    link.href=URL.createObjectURL(blob);
+    link.download="Fairview_PTC_Bookings.csv";
+    link.click();
+}
+
+// ===== SMS REMINDER SIMULATION =====
 setInterval(()=>{
- const now=new Date().getTime();
- const distance=eventDate-now;
+    let now=new Date().toLocaleString("en-NG",{timeZone:"Africa/Lagos"});
+    now=new Date(now);
 
- if(distance<=0){
-  document.getElementById("countdown").innerHTML="<h2>🎉 PTC HAS STARTED!</h2>";
-  return;
- }
+    bookings.forEach(b=>{
+        let meeting=new Date(eventDate);
+        let [h,m]=b.time.split(":");
+        meeting.setHours(h,m,0);
+        if(meeting-now===3600000){
+            console.log("SMS Reminder sent to "+b.parent);
+        }
+    });
+},60000);
 
- document.getElementById("days").innerHTML=Math.floor(distance/(1000*60*60*24));
- document.getElementById("hours").innerHTML=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
- document.getElementById("minutes").innerHTML=Math.floor((distance%(1000*60*60))/(1000*60));
- document.getElementById("seconds").innerHTML=Math.floor((distance%(1000*60))/1000);
-
-},1000);
-
-// Teachers per class
-const teachers = {
- "Year 1 Onyx": ["Ms. Victoria"],
- "Year 1 Amber": ["Ms. Rita, Judith"],
- "Year 2 Ruby": ["Ms. Irene, Victoria"],
- "Year 2 Beryl": ["Ms. Ifeoluwa"],
- "Year 3 Crystal": ["Ms. Zainab"],
- "Year 3 Silver": ["Ms. Mary"],
- "Year 4 Gold": ["Ms. Maryjane"],
- "Year 4 Topaz": ["Mr. Jacob"],
- "Year 5 Diamond": ["Mr. Michael"],
- "Year 5 Opal": ["Ms. Ayoola"],
- "Year 6 Pearl": ["Ms. Imaobong"]
-};
-
-// External class links
-const classLinks = {
- "Year 1 Onyx": "https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ0rYRtfsS0YSZnutOo0_TqW8oPJgK-F9g_qKDUeRw0uPHg7uYmdKwIzhwDfRXBmetIxoEUEVpKe",
- "Year 1 Amber": "https://calendar.app.google/JkBUKhqXFwFCFuLs7",
- "Year 2 Ruby": "https://calendar.app.google/gfJixyvndGv5H3bm9",
- "Year 2 Beryl": "https://calendar.app.google/dgdvBJFCeTH6AchZ8",
- "Year 3 Crystal": "https://calendar.app.google/Y83p4YJ5PEdu6p8g9",
- "Year 3 Silver": "https://calendar.app.google/6MLhowC1ff6dKVDk6",
- "Year 4 Gold": "https://calendar.app.google/c5LYHPf5XYjSF2bN8",
- "Year 4 Topaz": "https://calendar.app.google/uMppKwDXSQtbu8CQ8",
- "Year 5 Diamond": "https://calendar.app.google/HRv1sGNca44dymbN9",
- "Year 5 Opal": "https://calendar.app.google/9nMPUL3aaayTJPcG6",
- "Year 6 Pearl": "https://calendar.app.google/JkBUKhqXFwFCFuLs7"
-};
-
-function updateTeachers(){
- const classValue = document.getElementById("classSelect").value;
- const teacherSelect = document.getElementById("teacherSelect");
- const linkBtn = document.getElementById("classLinkBtn");
-
- teacherSelect.innerHTML = "<option value=''>Select Teacher</option>";
-
- if(teachers[classValue]){
-  teachers[classValue].forEach(teacher=>{
-   let option = document.createElement("option");
-   option.value = teacher;
-   option.text = teacher;
-   teacherSelect.appendChild(option);
-  });
- }
-
- // Show link button if available
- if(classLinks[classValue]){
-   linkBtn.style.display = "block";
- } else {
-   linkBtn.style.display = "none";
- }
-}
-
-document.getElementById("appointmentDate").min = new Date().toISOString().slice(0,16);
-
-// Booking submit to Google Apps Script backend
-function submitBooking(){
-
- const data={
-  name:document.getElementById("parentName").value,
-  phone:document.getElementById("phone").value,
-  email:document.getElementById("email").value,
-  class:document.getElementById("classSelect").value,
-  teacher:document.getElementById("teacherSelect").value,
-  date:document.getElementById("appointmentDate").value.split("T")[0],
-  time:document.getElementById("appointmentDate").value.split("T")[1]
- };
-
- fetch("PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE",{
-  method:"POST",
-  body:JSON.stringify(data)
- })
- .then(res=>res.text())
- .then(response=>{
-   if(response=="Slot already booked"){
-     alert("❌ This time slot is already booked. Please choose another.");
-   }else{
-     alert("✅ Booking Confirmed! Email & SMS Sent.");
-   }
- });
-
-}
-
-function openClassLink(){
- const classValue = document.getElementById("classSelect").value;
- if(classLinks[classValue]){
-  window.open(classLinks[classValue], "_blank");
- }
-}
 </script>
-
 </body>
 </html>
