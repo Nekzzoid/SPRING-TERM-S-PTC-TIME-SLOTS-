@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -116,7 +117,7 @@ th,td{border:1px solid #ccc;padding:6px;font-size:12px;}
 </div>
 
 <div class="footer">
-© <span id="year"></span> Fairview School | Powered by Fairview Digital Systems
+© <span id="year"></span> Fairview School Abuja | 5 Edwin Clark Crescent, Guzape, Abuja. Front Desk: 0911 919 5305. Email: info@fairviewschoolng.com.| Powered by Fairview IT Team
 </div>
 
 <script>
